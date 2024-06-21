@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="AvalonBench -- a comprehensive game environment tailored for evaluating multi-agent LLM Agents.">
+  <meta name="keywords" content="LLM Agents, deception, cooperation, Avalon, AvalonBench">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><span class="textsc">Strategist</span>: Learning Strategic Skills by LLMs via Bi-Level Tree Search</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/explorer-index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title"><span class="textsc">Strategist</span>: Learning Strategic Skills by LLMs via Bi-Level Tree Search</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://jonathanmli.github.io/">Jonathan Light</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://github.com/HenryCai11">Min Cai</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://weiqinchen7.github.io/">Weiqin Chen</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://guanzhi.me">Guanzhi Wang</a><sup>3</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://xiusic.github.io">Xiusi Chen</a><sup>4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=PRrGVmoAAAAJ&hl=zh-CN">Wei Cheng</a><sup>?</sup>,
+            </span>
+            <span class="author-block">
+              <a href="http://www.yisongyue.com">Yisong Yue</a><sup>3</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://acbull.github.io/">Ziniu Hu</a><sup>3</sup>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Rensselaer Polytechnic Institute,</span>
+            <span class="author-block"><sup>2</sup>Shenzhen University</span>
+            <span class="author-block"><sup>3</sup>California Institute of Technology</span>
+            <span class="author-block"><sup>4</sup>University of California, Los Angeles</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2310.05036.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2310.05036.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/jonathanmli/Avalon-LLM"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TODO: put a vedio clip here -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/single_llm_gpt_3.5.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <span class="textsc">Strategist</span>🤖 playing against rule-based bots in <span class="textsc">AvalonBench</span>
+      </h2>
+    </div>
+  </div>
+</section>
+
+<!-- TODO: put a vedio clip here -->
+<!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/single_llm_gpt_4.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <span>GPT-4-turbo</span>🤖 playing against rule-based bots in <span class="textsc">AvalonBench</span>
+      </h2>
+    </div>
+  </div>
+</section> -->
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            We explore the potential of Large Language Models (LLMs) Agents in
+            playing the strategic social deduction game, Resistance Avalon.
+          </p>
+          <p>  
+            In this paper, we propose a new method <span class="textsc">Strategist</span> that utilizes LLMs to acquire new skills
+            for playing multi-agent games through a self-improvement process. Our method gathers quality 
+            feedback through self-play simulations with Monte Carlo tree search and LLM-based reflection, 
+            which can then be used to learn high-level strategic skills such as how to evaluate states that 
+            guide the low-level execution. We showcase how our method can be used in both action planning and 
+            dialogue generation in the context of games, achieving good performance on both tasks.
+          <p>
+            Specifically, we demonstrate that our method can help train agents with better performance than both traditional 
+            reinforcement learning-based approaches and other LLM-based skill learning approaches in the games 
+            of Game of Pure Strategy (GOPS) and Resistance: Avalon.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Method</h2>
+        <h3 class="title is-4">Overview of <span class="textsc">Strategist</span></h3>
+        <div class="content has-text-justified">
+          <figure class="wrap-around-figure">
+            <img src="./static/images/overview.png" alt="Overview of Strategist">
+            <figcaption>Overview of Strategist. Our method learns high-level skills/strategies through figuring out how to search 
+              and improve previously learned strategies. We use low-level self-play simulations to guide the high-level search 
+              process.</figcaption>
+          </figure>
+          <p>
+            Our improvement process contains two improvement steps in each improvement cycle --  
+            the (1) reflection and idea generation step and (2) the strategy improvement step. 
+            During the idea generation step we prompt the LLM to reflect on simulated self-play 
+            feedback from previously evaluated strategies and generate possible improvement ideas 
+            to the strategies and add them to the idea queue. During the strategy improvement step, 
+            we select a strategy from the strategy tree and an improvement idea from the idea queue 
+            and prompt the LLM to improve the strategy using the improvement idea. The improved 
+            strategy is then evaluated via self-play simulations, and we use the feedback and reward 
+            signals from the simulation to help guide future improvements.
+          </p>
+          <p>
+            The general goal in our decision-making setting is to learn a good policy function in 
+            a sequential decision-making setting (generally formulated as a partially observable 
+            Markov decision game (POMDG)), which can be done by improving strategies associated with 
+            the policy function. We describe in more detail what a strategy looks like, how we derive 
+            a policy function from a strategy, and how to acquire feedback for the strategy for both 
+            dialogue generation and action generation here. 
+          </p>
+        </div>
+        <h3 class="title is-4">Skill Coach Improvement of <span class="textsc">Strategist</span></h3>
+        <div class="content has-text-justified">
+          <div class="carousel results-carousel">
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <figure class="figure">
+                  <img src="./static/images/skill-improve.png" alt="Overview of Skill Improve">
+                  <figcaption>
+                    Overview of our skill coach improvement method. There are two improvement steps –
+                    the idea generation step and the strategy improvement step and we alternate between the two.
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/psuedocode.png" alt="image name"/>
+              </div>
+            </div>
+          </div>
+          <p>
+            During the <b>idea generation step</b>, a strategy $\sigma$ and its simulated trajectory 
+            feedback $\tau_\sigma$ is first selected from the strategy tree according to the 
+            adaptive selection policy. The feedback usually trajectories from previous self-play 
+            simulations, including the states visited, actions taken at those states, the estimated 
+            win-rate at that state, the final outcome of the trajectory, and any intermediate values 
+            used during simulations at those states. Since these trajectories are very long (around 
+            30 steps each for Avalon), we select some key states in the trajectory to translate into 
+            natural language. We then prompt the LLM to reflect on this feedback and propose a couple 
+            of new ideas on how to improve the function. These new ideas are added to the idea queue, 
+            along with a score prior to how good the idea is. 
+          </p>
+          <p>
+            During the <b>strategy improvement step</b>, we first select a strategy and an idea 
+            from the libraries using the adaptive selection policy. We then prompt the LLM to implement 
+            the idea of the strategy, generating a new improved strategy. We then evaluate the strategy 
+            using the evaluator, which conducts self-play simulations with the strategy, and records the 
+            simulated trajectory data. During simulations, players conduct an MCTS tree search to estimate 
+            the expected win-rate at different states, which provides additional feedback. We add the 
+            improved strategy (and its performance) to the strategy tree, and update the improvement 
+            score for the idea that was used. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3"><span class="textsc">Strategist</span> Main Results</h2>
+        <!-- <h3 class="title is-4">Overview of <span class="textsc">Strategist</span></h3> -->
+        <div class="content has-text-justified">
+          <div class="carousel results-carousel">
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/comparison-rl.png" alt="image name" width="100%"/>
+                <img src="static/images/comparison-self-improve.png" alt="image name" width="100%"/>
+              </div>
+            </div>
+            <!-- <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/comparison-self-improve.png" alt="image name" width="100%"/>
+              </div>
+            </div> -->
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/compute-budget.png" alt="image name" width="50%"/>
+              </div>
+            </div>
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/example-performance.png" alt="image name" width="80%"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Conclusion</h2>
+        <div class="content has-text-justified">
+          <p>
+            We explore the potential of Large Language Models (LLMs) Agents in
+            playing the strategic social deduction game, Resistance Avalon.
+          </p>
+          <p>  
+            In this paper, we propose a new method <span class="textsc">Strategist</span> that utilizes LLMs to acquire new skills
+            for playing multi-agent games through a self-improvement process. Our method gathers quality 
+            feedback through self-play simulations with Monte Carlo tree search and LLM-based reflection, 
+            which can then be used to learn high-level strategic skills such as how to evaluate states that 
+            guide the low-level execution. We showcase how our method can be used in both action planning and 
+            dialogue generation in the context of games, achieving good performance on both tasks.
+          <p>
+            Specifically, we demonstrate that our method can help train agents with better performance than both traditional 
+            reinforcement learning-based approaches and other LLM-based skill learning approaches in the games 
+            of Game of Pure Strategy (GOPS) and Resistance: Avalon.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+<!-- <section class="section">
+  <div class="container is-max-desktop">
+    Related Links (AgentBench).
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Related Links</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            Our code is based on <a href="https://llmbench.ai/agent">AgentBench</a>, the first benchmark designed to evaluate LLM-as-Agent across a diverse spectrum of different environments.
+          </p>
+          <p>
+            <span class="textsc">AvalonBench</span> has now been included in their benchmark. See <a href="https://github.com/THUDM/AgentBench/tree/main/src/server/tasks/avalon">here</a> for more details.
+          </p>
+        </div>
+      </div>
+    </div>
+    Related Links (AgentBench). -->
+
+  <!-- </div> -->
+<!-- </section> -->
+
+
+<!-- TODO: add the workshop or arxiv bibtex here -->
+<!-- <section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{
+      light2023from,
+      title={From Text to Tactic: Evaluating {LLM}s Playing the Game of Avalon},
+      author={Jonathan Light and Min Cai and Sheng Shen and Ziniu Hu},
+      booktitle={NeurIPS 2023 Foundation Models for Decision Making Workshop},
+      year={2023},
+      url={https://openreview.net/forum?id=ltUrSryS0K}
+  }</code></pre>
+  </div>
+</section> -->
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="https://arxiv.org/pdf/2310.05036.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/jonathanmli/Avalon-LLM" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            We are using <a
+              href="https://nerfies.github.io/">Nerfies project page</a> as our template. Thanks for their great work.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="AvalonBench -- a comprehensive game environment tailored for evaluating multi-agent LLM Agents.">
+        content="Strategist -- an advanced agent.">
   <meta name="keywords" content="LLM Agents, deception, cooperation, Avalon, AvalonBench">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><span class="textsc">Strategist</span>: Learning Strategic Skills by LLMs via Bi-Level Tree Search</title>
+  <title>Strategist: Learning Strategic Skills by LLMs via Bi-Level Tree Search</title>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
@@ -50,12 +50,22 @@
   </div>
   <div class="navbar-menu">
     <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="https://keunhong.com">
+      <!-- <a class="navbar-item" href="https://github.com/HenryCai11">
       <span class="icon">
           <i class="fas fa-home"></i>
       </span>
-      </a>
+      </a> -->
 
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://avalonbench.github.io">
+            <span class="small-caps">AvalonBench</span>
+          </a>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -83,7 +93,7 @@
               <a href="https://xiusic.github.io">Xiusi Chen</a><sup>4</sup>,
             </span>
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=PRrGVmoAAAAJ&hl=zh-CN">Wei Cheng</a><sup>?</sup>,
+              <a href="https://scholar.google.com/citations?user=PRrGVmoAAAAJ&hl=zh-CN">Wei Cheng</a><sup>5</sup>,
             </span>
             <span class="author-block">
               <a href="http://www.yisongyue.com">Yisong Yue</a><sup>3</sup>,
@@ -98,6 +108,7 @@
             <span class="author-block"><sup>2</sup>Shenzhen University</span>
             <span class="author-block"><sup>3</sup>California Institute of Technology</span>
             <span class="author-block"><sup>4</sup>University of California, Los Angeles</span>
+            <span class="author-block"><sup>5</sup>NEC laboratories America</span>
           </div>
 
           <div class="column has-text-centered">
@@ -289,6 +300,10 @@
         <h2 class="title is-3"><span class="textsc">Strategist</span> Main Results</h2>
         <!-- <h3 class="title is-4">Overview of <span class="textsc">Strategist</span></h3> -->
         <div class="content has-text-justified">
+          <div class="content has-text-centered">
+            To demonstrate our method...
+            <img src="static/images/example-performance.png" alt="image name" width="80%"/>
+          </div>
           <div class="carousel results-carousel">
             <div class="box m-5">
               <div class="content has-text-centered">
@@ -306,11 +321,11 @@
                 <img src="static/images/compute-budget.png" alt="image name" width="50%"/>
               </div>
             </div>
-            <div class="box m-5">
+            <!-- <div class="box m-5">
               <div class="content has-text-centered">
                 <img src="static/images/example-performance.png" alt="image name" width="80%"/>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -325,20 +340,15 @@
         <h2 class="title is-3">Conclusion</h2>
         <div class="content has-text-justified">
           <p>
-            We explore the potential of Large Language Models (LLMs) Agents in
-            playing the strategic social deduction game, Resistance Avalon.
+            In conclusion, we have presented <span>Strategist</span>, a generalizable non-parametric self-improvement 
+            framework that learns and improves skills. Given the rules of the game, our method is able to 
+            learn good strategies to play the game through self-play without task-specific prompting 
+              or human generated policy data.
           </p>
-          <p>  
-            In this paper, we propose a new method <span class="textsc">Strategist</span> that utilizes LLMs to acquire new skills
-            for playing multi-agent games through a self-improvement process. Our method gathers quality 
-            feedback through self-play simulations with Monte Carlo tree search and LLM-based reflection, 
-            which can then be used to learn high-level strategic skills such as how to evaluate states that 
-            guide the low-level execution. We showcase how our method can be used in both action planning and 
-            dialogue generation in the context of games, achieving good performance on both tasks.
           <p>
-            Specifically, we demonstrate that our method can help train agents with better performance than both traditional 
-            reinforcement learning-based approaches and other LLM-based skill learning approaches in the games 
-            of Game of Pure Strategy (GOPS) and Resistance: Avalon.
+            The performance of <span>Strategist</span> suggests that incorporating better guidance, 
+            whether this be through modular high-level search or low-level simulated self-play feedback, 
+            into LLM-improvement processes can greatly enhance the improvement process.
           </p>
         </div>
       </div>
@@ -388,6 +398,266 @@
   }</code></pre>
   </div>
 </section> -->
+
+<section class="forecasting-example" id="example">
+  <div class="container">
+    <h2 class="title is-3">LLM-Improvement Example</h2>
+    <!-- <div class="box query-details-box">
+      <div class="content">
+        <h3 class="title is-5">
+          <i class="fas fa-info-circle"></i> Query Details
+        </h3>
+        <ul>
+          <li><strong>Query Quadruplet:</strong> (2023-11-03, AUS, ?, CHN)</li>
+          <li><strong>Temporal Distance:</strong> 1; therefore, the current date is 2023-11-02</li>
+          <li><strong>Agent Max Steps:</strong> 20</li>
+        </ul>
+      </div>
+      <div class="content">
+        <h3 class="title is-5">
+          <i class="fas fa-question-circle"></i> Query Prompt
+        </h3>
+        <p>Please forecast the relations that <span class="highlight">Australia</span> will take towards <span class="highlight">China</span> on <span class="highlight">November 03, 2023</span> based on historical information up to <span class="highlight">November 02, 2023</span>. I.e., forecast the relation CAMEO codes in query event <span class="highlight">Event(date=2023-11-03, head_entity=ISOCode(AUS), relation=CAMEOCode(?), tail_entity=ISOCode(CHN))</span>.</p>
+      </div>
+    </div> -->
+
+    <div class="box system-prompt-box">
+      <div class="content">
+        <h3 class="title is-5">
+          <i class="fas fa-cogs"></i> System Prompt
+        </h3>
+        <strong>Value heuristic system prompt</strong>
+        <p>You are a function engineer trying to write a function that can evaluate the value of a state in a game. 
+          This is known as a value heuristic, and will be used in look-ahead search algorithms to evaluate the value 
+          of unexplored states. Your goal is to develop a heuristic that is as accurate as possible without being 
+          too expensive to compute. Hence, you are not allowed to runs simulations in the function.</p>
+        <p></p>
+        <strong>Value heuristics function signature</strong>
+        <p>The function (written in python) should be named `evaluate state' and take in a tuple called `state' of the game state as input. 
+          Specifically, the input tuple will be of length 9, and it should return 2 elements. 
+          The first element should be a tuple with 2 floats: the first element being the score you expect player 0 will get at the end of the game, and the second element being the score you expect player 1 will get at the end of the game.
+          The second element should be a dictionary of any important intermediate values that you used to calculate the scores.
+          For example, if you think player 0 will win 12 total points by the end of the game and player 1 will win 8 total points, the function should return (12, 8).
+        </p>
+        <p></p>
+        <p>
+          Make sure your output only includes the code of the function itself in plain text such that it is executable using exec() in python. Any helper functions should be defined within the scope of the function `evaluate state'.
+          Include comments in your code so that it is readable, but everything should be implemented.
+        </p>
+        <p></p>
+        <p>The signature of the function should be as follows:</p>
+        <pre><code class="language-python">
+def evaluate_state(state) -> tuple[tuple[float, float], dict]:
+    score_cards = state[0] # a python list of the score cards (integers) that have been played, in the order they were played
+    player_0_played_cards = state[1] # a python list of the cards (integers) player 0 has played, in the order they were played. 
+    player_1_played_cards = state[2] # a python list of the cards (integers) player 1 has played, in the order they were played. 
+    is_turn = state[3] # bool, true if it is you and your opponent's turn to play, false if it is time to draw a new score card
+    player_0_score = state[4] # float or integer, player 0's score so far
+    player_1_score = state[5] #  float or integer, player 1's score so far
+    score_deck = state[6] # a python set of the score cards (integers) left in the deck, either same length as player_0_hand and player_1_hand or one less since the score card appears before the players play. May be empty
+    player_0_hand = state[7] # a python set of the cards (integers) left in player 0's hand. May be empty
+    player_1_hand = state[8] # a python set of the cards (integers) left in player 1's hand. May be empty
+    # explanation of what we do next
+    ...
+    <intermediate_value1> = value1 
+    # explanation of what we do next
+    ...
+    <intermediate_value2> = value2 
+    # explanation of what we do next
+    ...
+    player_scores = (player_0_expected_score, player_1_expected_score)
+    intermediate_values = {'<intermediate_value1>': intermediate_value1, '<intermediate_value2>': intermediate_value2, ...}
+    return player_scores, intermediate_values # make sure the return is exactly in this format
+        </code></pre>
+        <p>Where you can use your own names for the intermediate values and the values themselves.
+          Please start with "def evaluate state(state):"</p>
+      </div>
+    </div>
+
+    <div class="box react-process-box">
+    <div class="scroll-container">
+      <!-- Scrollable Content 1 -->
+      <!-- Add more content here for additional Agent ReAct Processes -->
+      <div class="content">
+        <h3 class="title is-5">
+          <i class="fas fa-retweet"></i> LLM-Improvement
+        </h3>
+        <p><strong>GOPS Value Heuristics Function (Before)</strong></p>
+        <pre><code class="language-python">
+def evaluate_state(state) -> tuple[tuple[float, float], dict]:
+    score_cards = state[0]
+    player_0_played_cards = state[1]
+    player_1_played_cards = state[2]
+    is_turn = state[3]
+    player_0_score = state[4]
+    player_1_score = state[5]
+    score_deck = state[6]
+    player_0_hand = state[7]
+    player_1_hand = state[8]
+    
+    # Calculate the potential scores for each player based on the remaining score cards
+    player_potential_score = player_0_score
+    opponent_potential_score = player_1_score
+    
+    if len(score_deck) > 0:
+        remaining_score_cards = len(score_deck)
+        if len(player_0_played_cards) > len(player_1_played_cards):
+            player_potential_score += remaining_score_cards / 2
+        elif len(player_1_played_cards) > len(player_0_played_cards):
+            opponent_potential_score += remaining_score_cards / 2
+    
+    player_advantage = player_potential_score - opponent_potential_score
+    
+    return (player_potential_score, opponent_potential_score), {'player_advantage': player_advantage}
+        </code></pre>
+        <p><strong>Selected GOPS Value Heuristics Improvement Idea</strong></p>
+        <p>Update the function to calculate the advantage of winning future rounds based on the 
+          potential scores each player could achieve with the remaining score cards and their current 
+          scores. This would involve considering the number of cards left in the deck, the players' 
+          hands, and the current scores to determine the advantage one player may have over the other 
+          in the upcoming rounds.
+        </p>
+        <p><strong>GOPS Value Heuristics Function (After)</strong></p>
+        <pre><code class="language-python">
+def evaluate_state(state) -> tuple[tuple[float, float], dict]:
+    score_cards = state[0] 
+    player_0_played_cards = state[1] 
+    player_1_played_cards = state[2] 
+    is_turn = state[3] 
+    player_0_score = state[4] 
+    player_1_score = state[5] 
+    score_deck = state[6] 
+    player_0_hand = state[7] 
+    player_1_hand = state[8] 
+    
+    # Calculate the potential scores for each player based on the remaining score cards 
+    # and current scores
+    player_potential_score = player_0_score + sum(score_deck) / 2
+    opponent_potential_score = player_1_score + sum(score_deck) / 2
+    
+    # Determine the advantage of winning future rounds based on potential score
+    @\Hilight@if is_turn:
+    @\Hilight@    player_potential_scores = [player_potential_score + card for card in player_0_hand]
+    @\Hilight@    opponent_potential_scores = [opponent_potential_score + card for card in player_1_hand]
+        
+    @\Hilight@    player_advantage = sum(player_potential_scores) / len(player_potential_scores) 
+    @\Hilight@    - sum(opponent_potential_scores) / len(opponent_potential_scores)
+    @\Hilight@else:
+    @\Hilight@    player_advantage = player_potential_score - opponent_potential_score
+    
+    return (player_potential_score, opponent_potential_score), {'player_advantage': player_advantage}
+        </pre></code>
+        <p><strong>LLM-generated Value Heuristic for Avalon (Before)</strong></p>
+        <pre><code class="language-python">def evaluate_state(state: dict) -> tuple[dict[Any, float], dict]:
+          players: set[int] = state['players']
+          turn: int = state['turn']
+          phase: int = state['phase']
+          round_number: int = state['round']
+          quest_leader: int = state['quest_leader']
+          quest_team: set[int] = state['quest_team']
+          historical_quest_results: list[bool] = state['historical_quest_results']
+          historical_team_votes: list[bool] = state['historical_team_votes']
+          num_good: int = state['num_good']
+          num_participants_per_quest: list[int] = state['num_participants_per_quest']
+          num_fails_per_quest: list[int] = state['num_fails_per_quest']
+          roles: list[str] = state['roles']
+          is_good: list[bool] = state['is_good']
+      
+          # Initialize the probability that Good will win
+          prob_good_victory = 0.5
+      
+          intermediate_values = {}
+      
+          if phase == 0:  # Team selection phase
+              # Modify the probability of Good winning based on the role of the quest leader
+              if roles[quest_leader] in ['Minion', 'Assassin']:
+                  prob_good_victory -= 0.1
+              else:
+                  prob_good_victory += 0.1
+      
+              # Store the intermediate values used for calculations
+              intermediate_values['role_influence'] = prob_good_victory
+      
+          elif phase == 1:  # Team approval phase
+              if len(historical_team_votes) >= 4:
+                  prob_good_victory -= 0.1
+              else:
+                  if roles[quest_leader] in ['Minion', 'Assassin']:
+                      prob_good_victory -= 0.1
+                  else:
+                      prob_good_victory += 0.1
+      
+              # Store the intermediate values used for calculations
+              intermediate_values['approval_influence'] = prob_good_victory
+      
+          elif phase == 2:  # Quest phase
+              successful_quests = sum(historical_quest_results)
+              failed_quests = len(historical_quest_results) - successful_quests
+              if successful_quests > failed_quests:
+                  prob_good_victory += 0.2
+              else:
+                  prob_good_victory -= 0.2
+      
+              # Store the intermediate values used for calculations
+              intermediate_values['quest_outcome'] = prob_good_victory
+      
+          elif phase == 3:  # Assassination phase
+              if 'Merlin' in roles:
+                  prob_good_victory -= 0.2
+              else:
+                  prob_good_victory += 0.2
+      
+              # Store the intermediate values used for calculations
+              intermediate_values['assassination_outcome'] = prob_good_victory
+      
+          expected_winrates_per_player = {}
+          prob_evil_victory = 1 - prob_good_victory
+          for player in players:
+              if is_good[player]:
+                  expected_winrates_per_player[player] = prob_good_victory
+              else:
+                  expected_winrates_per_player[player] = prob_evil_victory
+      
+          return expected_winrates_per_player, intermediate_values
+        </code></pre>
+      </div>
+      
+  <!-- <div class="box final-status-box">
+    <div class="content">
+      <h3 class="title is-5">
+        <i class="fas fa-flag-checkered"></i> Agent Final Status
+      </h3>
+      <p><strong>End State:</strong> Final Answer</p>
+      <p><strong>Number of Steps Taken:</strong> 5</p>
+      <p><strong>Final Answer:</strong></p>
+      <pre><code class="language-json">{
+"03": ["031", "036"],
+"04": ["040", "042", "043", "046"],
+"06": ["061"],
+"17": ["173"]
+}</code></pre>
+        <p>We show the corresponding relation names of the predicted codes here for a better review:</p>
+        <pre><code class="language-json">{
+"Express intent to cooperate": ["Express intent to engage in material cooperation", "Express intent to meet or negotiate"],
+"Consult": ["Consult, not specified", "Make a visit", "Host a visit", "Engage in negotiation"],
+"Engage in material cooperation": ["Cooperate economically"],
+"Coerce": ["Arrest or detain"]
+}</code></pre>
+        <p><strong>Ground Truth Answer:</strong></p>
+        <pre><code class="language-json">{
+"03": ["036"],
+"04": ["042"],
+"17": ["173"]
+}</code></pre>
+      <p>We show the corresponding relation names of the ground-truth codes here for a better review:</p>
+        <pre><code class="language-json">{
+"Express intent to cooperate": ["Express intent to meet or negotiate"],
+"Consult": ["Make a visit"],
+"Coerce": ["Impose administrative sanctions"]
+}</code></pre>
+    </div>
+</div> -->
+</section>
 
 
 <footer class="footer">

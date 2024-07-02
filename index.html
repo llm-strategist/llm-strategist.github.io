@@ -266,8 +266,8 @@
             </div>
           </div>
           <p>
-            During the <b>idea generation step</b>, a strategy $\sigma$ and its simulated trajectory 
-            feedback $\tau_\sigma$ is first selected from the strategy tree according to the 
+            During the <b>idea generation step</b>, a strategy and its simulated trajectory 
+            feedback is first selected from the strategy tree according to the 
             adaptive selection policy. The feedback usually trajectories from previous self-play 
             simulations, including the states visited, actions taken at those states, the estimated 
             win-rate at that state, the final outcome of the trajectory, and any intermediate values 
@@ -301,8 +301,13 @@
         <!-- <h3 class="title is-4">Overview of <span class="textsc">Strategist</span></h3> -->
         <div class="content has-text-justified">
           <div class="content has-text-centered">
-            To demonstrate our method...
             <img src="static/images/example-performance.png" alt="image name" width="80%"/>
+          </div>
+          <div class="content">
+            <p>We demonstrate the effectiveness of our self-improvement process through experiments against different improvement benchmarks. We tested our method on (1) <a href="https://en.wikipedia.org/wiki/Goofspiel">GOPS</a>, a two-player zero-sum card game and (2) <a href="https://en.wikipedia.org/wiki/The_Resistance_(game)">Avalon</a>, a five or more player team-based discussion game.  For Avalon dialogue generation, we specifically benchmark on the Merlin role, since that is the hardest role to play.</p>
+            <p><b>Different LLM Improvement Methods</b>. We demonstrate the effectiveness of our strategy improvement method by benchmarking it against four other skill-improvement methods.</p>
+            <p><b>LLM-improvement vs. Reinforcement Learning (RL) Training</b>. We demonstrate the effectiveness of our method against traditional RL-based approaches to learning a good policy. Specifically, we show that our method is able to learn a value heuristic function more efficiently than deep RL, the approach taken by AlphaGo and MuZero.</p>
+            <p><b>Feedback Quality and Reward Signal</b>. We benchmark our feedback acquisition method against (1) using a <b>LLM-critic</b>  and (2) trajectory feedback from interactions against a <b>fixed opponent policy</b>.</p>
           </div>
           <div class="carousel results-carousel">
             <div class="box m-5">
@@ -471,6 +476,27 @@ def evaluate_state(state) -> tuple[tuple[float, float], dict]:
         </code></pre>
         <p>Where you can use your own names for the intermediate values and the values themselves.
           Please start with "def evaluate state(state):"</p>
+
+        <strong>Dialogue guide system prompt</strong>
+        <p>You are a coach trying to write a section of a strategy guide on how to play a game well.</p>
+        <p></p>
+        <p></p>
+        <p>
+          The specific section of the strategy guide you are writing right now is on how to play the Merlin 
+          role effectively during the discussion phase so that they can win the game. Recall that players often 
+          use the discussion phase to (1) gather information about other players, (2) try to convince other players 
+          of their innocence or guilt, and (3) try to persuade other players of a particular course of action.
+        </p>
+        <p>
+          The game you are interested in is called The Resistance: Avalon. The Resistance: Avalon is the game of 
+          hidden identities and social deduction. There are two teams in the game: Good and Evil. Each player has 
+          a hidden identity (role) and side.
+        </p>
+        <p></p>
+        <strong>Dialogue guide signature</strong>
+        <p>Your guide should be in the form of a worksheet that the student can use to build their speech. You should order the worksheet questions in a way that makes logical sense, and you should have no more than six questions. Your questions should instruct the reader to write parts of their speech.</p>
+        <p></p>
+        <p>The title of your section should be ``Questions to fill out before speaking as the Merlin role''. Below is an example of how your worksheet should look like:</p>
       </div>
     </div>
 
@@ -536,127 +562,164 @@ def evaluate_state(state) -> tuple[tuple[float, float], dict]:
     opponent_potential_score = player_1_score + sum(score_deck) / 2
     
     # Determine the advantage of winning future rounds based on potential score
-    @\Hilight@if is_turn:
-    @\Hilight@    player_potential_scores = [player_potential_score + card for card in player_0_hand]
-    @\Hilight@    opponent_potential_scores = [opponent_potential_score + card for card in player_1_hand]
+<mark>    if is_turn:
+        player_potential_scores = [player_potential_score + card for card in player_0_hand]
+        opponent_potential_scores = [opponent_potential_score + card for card in player_1_hand]
         
-    @\Hilight@    player_advantage = sum(player_potential_scores) / len(player_potential_scores) 
-    @\Hilight@    - sum(opponent_potential_scores) / len(opponent_potential_scores)
-    @\Hilight@else:
-    @\Hilight@    player_advantage = player_potential_score - opponent_potential_score
+        player_advantage = sum(player_potential_scores) / len(player_potential_scores) 
+        - sum(opponent_potential_scores) / len(opponent_potential_scores)
+    else:
+        player_advantage = player_potential_score - opponent_potential_score</mark>
     
     return (player_potential_score, opponent_potential_score), {'player_advantage': player_advantage}
         </pre></code>
         <p><strong>LLM-generated Value Heuristic for Avalon (Before)</strong></p>
-        <pre><code class="language-python">def evaluate_state(state: dict) -> tuple[dict[Any, float], dict]:
-          players: set[int] = state['players']
-          turn: int = state['turn']
-          phase: int = state['phase']
-          round_number: int = state['round']
-          quest_leader: int = state['quest_leader']
-          quest_team: set[int] = state['quest_team']
-          historical_quest_results: list[bool] = state['historical_quest_results']
-          historical_team_votes: list[bool] = state['historical_team_votes']
-          num_good: int = state['num_good']
-          num_participants_per_quest: list[int] = state['num_participants_per_quest']
-          num_fails_per_quest: list[int] = state['num_fails_per_quest']
-          roles: list[str] = state['roles']
-          is_good: list[bool] = state['is_good']
-      
-          # Initialize the probability that Good will win
-          prob_good_victory = 0.5
-      
-          intermediate_values = {}
-      
-          if phase == 0:  # Team selection phase
-              # Modify the probability of Good winning based on the role of the quest leader
-              if roles[quest_leader] in ['Minion', 'Assassin']:
-                  prob_good_victory -= 0.1
-              else:
-                  prob_good_victory += 0.1
-      
-              # Store the intermediate values used for calculations
-              intermediate_values['role_influence'] = prob_good_victory
-      
-          elif phase == 1:  # Team approval phase
-              if len(historical_team_votes) >= 4:
-                  prob_good_victory -= 0.1
-              else:
-                  if roles[quest_leader] in ['Minion', 'Assassin']:
-                      prob_good_victory -= 0.1
-                  else:
-                      prob_good_victory += 0.1
-      
-              # Store the intermediate values used for calculations
-              intermediate_values['approval_influence'] = prob_good_victory
-      
-          elif phase == 2:  # Quest phase
-              successful_quests = sum(historical_quest_results)
-              failed_quests = len(historical_quest_results) - successful_quests
-              if successful_quests > failed_quests:
-                  prob_good_victory += 0.2
-              else:
-                  prob_good_victory -= 0.2
-      
-              # Store the intermediate values used for calculations
-              intermediate_values['quest_outcome'] = prob_good_victory
-      
-          elif phase == 3:  # Assassination phase
-              if 'Merlin' in roles:
-                  prob_good_victory -= 0.2
-              else:
-                  prob_good_victory += 0.2
-      
-              # Store the intermediate values used for calculations
-              intermediate_values['assassination_outcome'] = prob_good_victory
-      
-          expected_winrates_per_player = {}
-          prob_evil_victory = 1 - prob_good_victory
-          for player in players:
-              if is_good[player]:
-                  expected_winrates_per_player[player] = prob_good_victory
-              else:
-                  expected_winrates_per_player[player] = prob_evil_victory
-      
-          return expected_winrates_per_player, intermediate_values
+        <pre><code class="language-python">def evaluate_state(state):
+    num_successful_quests = sum(historical_quest_results)
+    num_failed_quests = len(historical_quest_results) - num_successful_quests
+    num_remaining_quests = len(num_participants_per_quest) - len(historical_quest_results)
+
+    num_evil = len(players) - num_good
+    num_evil_in_quest_team = len([player for player in quest_team if not is_good[player]])
+
+    success_probability = 0.5
+    if phase == 0: 
+        if num_successful_quests >= 3:
+            success_probability = 0.9
+        elif num_failed_quests >= 3:
+            success_probability = 0.1
+    elif phase == 1: 
+        success_probability = 0.8 if num_evil_in_quest_team == 0 else 0.2
+    elif phase == 2: 
+        success_probability = 0.9 if num_successful_quests > num_failed_quests else 0.1
+    elif phase == 3: 
+        if 'Merlin' in roles and 'Assassin' in roles:
+            merlin_index = roles.index('Merlin')
+            assassin_index = roles.index('Assassin')
+            if assassin_index in quest_team:
+                success_probability = 0.1
+            else:
+                success_probability = 0.9 
+
+    expected_winrates_per_player = dict()
+    for player in players:
+        if is_good[player]:
+            expected_winrates_per_player[player] = success_probability
+        else:
+            expected_winrates_per_player[player] = 1 - success_probability
+
+    intermediate_values = {
+        'num_successful_quests': num_successful_quests,
+        'num_failed_quests': num_failed_quests,
+        'num_remaining_quests': num_remaining_quests,
+        'num_evil_in_quest_team': num_evil_in_quest_team
+    }
+
+    return expected_winrates_per_player, intermediate_values
         </code></pre>
+        <p><strong>Avalon Value Heuristics Function Improvement Idea</strong></p>
+        <p>Incorporate a more nuanced success probability calculation based on the roles of the players 
+          and the current phase of the game. For example, in phase 1 (team selection), consider the balance 
+          of Good and Evil players on the quest team and adjust the success probability accordingly. 
+          This can help better reflect the strategic considerations during team selection.
+        </p>
+        <p><strong>LLM-generated Value Heuristic for Avalon (After)</strong></p>
+        <pre><code class="language-python">
+def evaluate_state(state: dict) -> tuple[dict[int, float], dict]:
+    
+    prob_good_victory = 0.5  # probability that Good will win
+
+    if phase == 0:  # team selection phase
+<mark>        num_successful_quests = sum(historical_quest_results)
+        num_failed_quests = len(historical_quest_results) - num_successful_quests
+        num_remaining_quests = len(num_participants_per_quest) - len(historical_quest_results)
+        num_evil = len(players) - num_good
+        num_evil_in_quest_team = len([player for player in quest_team if not is_good[player]])
+
+        if num_successful_quests >= 3:
+            prob_good_victory = 0.9
+        elif num_failed_quests >= 3:
+            prob_good_victory = 0.1
+
+        intermediate_value1 = {'num_successful_quests': num_successful_quests, 'num_failed_quests': num_failed_quests,
+                               'num_remaining_quests': num_remaining_quests}
+        intermediate_value2 = {'num_evil_in_quest_team': num_evil_in_quest_team}
+
+    elif phase == 1:  # team approval phase
+        num_evil_in_quest_team = len([player for player in quest_team if not is_good[player]])
+
+        prob_good_victory = 0.8 if num_evil_in_quest_team == 0 else 0.2
+
+        intermediate_value1 = {'num_evil_in_quest_team': num_evil_in_quest_team}
+        intermediate_value2 = {}  # Initialize empty dictionary to avoid the error
+
+    elif phase == 2:  # quest phase
+        num_successful_quests = sum(historical_quest_results)
+        num_failed_quests = len(historical_quest_results) - num_successful_quests
+
+        prob_good_victory = 0.9 if num_successful_quests > num_failed_quests else 0.1
+
+        intermediate_value1 = {'num_successful_quests': num_successful_quests, 'num_failed_quests': num_failed_quests}
+        intermediate_value2 = {}  # Initialize empty dictionary to avoid the error </mark>
+        </code></pre>
+        </div>
       </div>
-      
-  <!-- <div class="box final-status-box">
-    <div class="content">
-      <h3 class="title is-5">
-        <i class="fas fa-flag-checkered"></i> Agent Final Status
-      </h3>
-      <p><strong>End State:</strong> Final Answer</p>
-      <p><strong>Number of Steps Taken:</strong> 5</p>
-      <p><strong>Final Answer:</strong></p>
-      <pre><code class="language-json">{
-"03": ["031", "036"],
-"04": ["040", "042", "043", "046"],
-"06": ["061"],
-"17": ["173"]
-}</code></pre>
-        <p>We show the corresponding relation names of the predicted codes here for a better review:</p>
-        <pre><code class="language-json">{
-"Express intent to cooperate": ["Express intent to engage in material cooperation", "Express intent to meet or negotiate"],
-"Consult": ["Consult, not specified", "Make a visit", "Host a visit", "Engage in negotiation"],
-"Engage in material cooperation": ["Cooperate economically"],
-"Coerce": ["Arrest or detain"]
-}</code></pre>
-        <p><strong>Ground Truth Answer:</strong></p>
-        <pre><code class="language-json">{
-"03": ["036"],
-"04": ["042"],
-"17": ["173"]
-}</code></pre>
-      <p>We show the corresponding relation names of the ground-truth codes here for a better review:</p>
-        <pre><code class="language-json">{
-"Express intent to cooperate": ["Express intent to meet or negotiate"],
-"Consult": ["Make a visit"],
-"Coerce": ["Impose administrative sanctions"]
-}</code></pre>
     </div>
-</div> -->
+
+    <div class="box final-status-box">
+      <div class="scroll-container">
+        <!-- Scrollable Content 1 -->
+        <!-- Add more content here for additional Agent ReAct Processes -->
+        <div class="content">
+          <h3 class="title is-5">
+            <i class="fas fa-retweet"></i> Dialogue Guide Improvement
+          </h3>
+          <p><strong>Dialogue guide (previous)</strong></p>
+          Questions to fill out before speaking as the Merlin role
+          <ol>
+            <li>Who are the players you suspect are on the Evil side and why?</li>
+            <li>Draft a subtle statement that casts doubt on these players without directly accusing them.</li>
+            <li>Who is the current round leader and which players are you considering to suggest for the team?</li>
+            <li>Create a subtle suggestion that influences the leader's team decision towards your preferred team without revealing your knowledge.</li>
+            <li>What are the voting patterns you've observed and what do these patterns indicate about the players' identities?</li>
+            <li>Craft a statement to share these observations subtly without giving away your role.</li>
+          </ol>
+          <p><strong>Selected GOPS Value Heuristics Improvement Idea</strong></p>
+          <p>Update the function to calculate the advantage of winning future rounds based on the 
+            potential scores each player could achieve with the remaining score cards and their current 
+            scores. This would involve considering the number of cards left in the deck, the players' 
+            hands, and the current scores to determine the advantage one player may have over the other 
+            in the upcoming rounds.
+          </p>
+          <p><strong>Improvement idea</strong></p>
+          <p>Add a question asking the reader to identify which players they feel most aligned with in terms of strategy and decision-making, and how they can subtly align themselves with these players during the discussion phase.</p>
+          <p><strong>Implementation prompt</strong></p>
+          <p class="texttt">&lt;System prompt&gt;</p>
+          <p class="texttt">&lt;Game rules&gt;</p>
+          <p>You previously generated the following section of the strategy guide:</p>
+          <p class="texttt">&lt;Previous guide&gt;</p>
+          <p>Here is a possible way to improve your guide:</p>
+          <p class="texttt">&lt;Improvement idea&gt;</p>
+          <p>Implement this improvement into the guide section as best as you can, but do not change the original guide too much. Make sure to stay within the scope of the guide section, which we reiterate below:</p>
+          <p class="texttt">&lt;Guide signature&gt;</p>
+
+          <p><strong>Dialogue guide (improved)</strong></p>
+          <p>
+            Questions to fill out before speaking as the Merlin role
+          </p>
+          <ol>
+            <li>Who are the players you suspect are on the Evil side and why?</li>
+            <li>Draft a subtle statement that casts doubt on these players without directly accusing them.</li>
+            <li>Who is the current round leader and which players are you considering to suggest for the team?</li>
+            <li>Create a subtle suggestion that influences the leader's team decision towards your preferred team without revealing your knowledge.</li>
+            <li>What are the voting patterns you've observed and what do these patterns indicate about the players' identities?</li>
+            <li>Craft a statement to share these observations subtly without giving away your role.</li>
+            <li><mark>Which player seems the most aligned with your strategic decisions and why?</mark></li>
+            <li><mark>Produce a statement to subtly align yourself with the player you feel most aligned with during the discussion phase.</mark></li>
+          </ol>
+          </div>
+        </div>
+      </div>
 </section>
 
 

@@ -334,12 +334,17 @@
             <p><b>Different LLM Improvement Methods</b>. We demonstrate the effectiveness of our strategy improvement method by benchmarking it against four other skill-improvement methods.</p>
             <p><b>LLM-improvement vs. Reinforcement Learning (RL) Training</b>. We demonstrate the effectiveness of our method against traditional RL-based approaches to learning a good policy. Specifically, we show that our method is able to learn a value heuristic function more efficiently than deep RL, the approach taken by AlphaGo and MuZero.</p>
             <p><b>Feedback Quality and Reward Signal</b>. We benchmark our feedback acquisition method against (1) using a <b>LLM-critic</b>  and (2) trajectory feedback from interactions against a <b>fixed opponent policy</b>.</p>
+            <p><b>Scale with Higher Search Budget</b>. We show that our improved value heuristics gains greater performance with higher search budget.</p>
           </div>
           <div class="carousel results-carousel">
             <div class="box m-5">
               <div class="content has-text-centered">
-                <img src="static/images/comparison-rl.png" alt="image name" width="100%"/>
                 <img src="static/images/comparison-self-improve.png" alt="image name" width="100%"/>
+              </div>
+            </div>
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/comparison-rl.png" alt="image name" width="100%"/>
               </div>
             </div>
             <!-- <div class="box m-5">
@@ -347,6 +352,22 @@
                 <img src="static/images/comparison-self-improve.png" alt="image name" width="100%"/>
               </div>
             </div> -->
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/comparison_training.png" alt="image name" width="80%"/>
+              </div>
+            </div>
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/comparison_scale.png" alt="image name" width="60%"/>
+              </div>
+            </div>
+            <div class="box m-5">
+              <div class="content has-text-centered">
+                <img src="static/images/comparison_feedback.png" alt="image name" width="80%"/>
+                <img src="static/images/comparison_llm_agent.png" alt="image name" width="80%"/>
+              </div>
+            </div>
             <div class="box m-5">
               <div class="content has-text-centered">
                 <img src="static/images/compute-budget.png" alt="image name" width="50%"/>
